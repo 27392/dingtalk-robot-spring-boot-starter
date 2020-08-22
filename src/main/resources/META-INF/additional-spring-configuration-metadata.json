@@ -1,0 +1,15 @@
+{
+  "properties": [
+    {
+      "name": "ding-talk.robot.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用钉钉机器人",
+      "defaultValue": "false"
+    },
+    {
+      "name": "ding-talk.robot.access-token",
+      "type": "java.lang.String",
+      "description": "access-token"
+    }
+  ]
+}

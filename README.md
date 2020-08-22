@@ -1,4 +1,6 @@
-<center>一个基于钉钉机器人实现简单日志监控的SpringBoot启动器</center>
+<p align="center">
+	<strong>一个基于钉钉机器人实现简单日志监控的SpringBoot启动器</strong>
+</p>
 
 ## 简介
 

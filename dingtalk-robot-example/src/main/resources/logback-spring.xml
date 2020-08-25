@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!--  配置 appender  -->
+    <appender name="DINGTALK" class="cn.haohaoli.dingtalk.robot.log.appender.DingTalkRobotAppender"/>
+
+    <!--  打印出请求日志  -->
+    <logger name="cn.haohaoli.dingtalk.robot" level="debug"/>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DINGTALK"/>
+    </root>
+
+</configuration>

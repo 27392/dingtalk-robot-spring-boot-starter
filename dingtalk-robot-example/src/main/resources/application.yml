@@ -1,0 +1,7 @@
+server:
+  port: 8080
+
+ding-talk:
+  robot:
+    enable: true
+    access-token:

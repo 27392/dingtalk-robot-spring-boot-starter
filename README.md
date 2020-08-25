@@ -14,15 +14,47 @@
 
 ### 使用
 
-首先获取到**自定义机器人webhook**,[点我前往官方文档](`https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq`)
+1. 首先获取到**自定义机器人webhook**,[点我前往官方文档](`https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq`)
 
-将本项目克隆到本地后在项目根目录执行`mvn install`命令.然后将依赖粘贴至其他项目中即可
+2. 将本项目克隆到本地后在项目根目录执行`mvn package`命令.然后将打好的jar包放在项目中的`resources/lib`目录下
+
+3. 配置maven插件,让其加载项目中的`jar`并在`clean`阶段安装到本地仓库中
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>3.0.0-M1</version>
+            <executions>
+                <execution>
+                    <id>1</id>
+                    <phase>clean</phase>    <!-- 生命周期 -->
+                    <goals>
+                        <goal>install-file</goal>
+                    </goals>
+                    <configuration>
+                        <groupId>cn.haohaoli</groupId>
+                        <artifactId>dingtalk-robot-spring-boot-starter</artifactId>
+                        <version>1.1.0-RELEASE</version>
+                        <file>${project.basedir}/src/main/resources/lib/dingtalk-robot-spring-boot-starter-1.1.0-RELEASE.jar</file>
+                        <generatePom>false</generatePom>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+4. 将依赖粘贴至`pom.xml`中
 
 ```xml
 <dependency>
     <groupId>cn.haohaoli</groupId>
     <artifactId>dingtalk-robot-spring-boot-starter</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
 </dependency>
 ```
 
@@ -51,7 +83,7 @@ ding-talk:
 
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
     
-    // 添加 appender
+    <!-- 添加 appender -->
     <appender name="DINGTALK" class="cn.haohaoli.dingtalk.robot.log.appender.DingTalkRobotAppender"/>
 
     <root level="info">
@@ -71,7 +103,7 @@ ding-talk:
    1. 继承`cn.haohaoli.dingtalk.robot.log.handle.MsgHandle`接口,在`getMsg`方法自定义逻辑
    2. 在`DingTalkRobotAppender`,`appender`中添加标签`<handle class="实现了MsgHandle接口的类"/>`
 
-> 注意! 每个机器人每分钟最多发送20条。如果超过20条，会限流10分钟.
+> 注意! 每个机器人每分钟最多发送20条。如果超过20条，会限流10分钟. (已使用Guava中的RateLimiter做处理)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

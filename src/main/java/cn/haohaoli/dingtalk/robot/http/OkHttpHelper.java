@@ -1,12 +1,13 @@
 package cn.haohaoli.dingtalk.robot.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.RateLimiter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author LiWenHao
@@ -17,14 +18,16 @@ public class OkHttpHelper {
 
     private final OkHttpClient HTTP_CLIENT;
 
+    //每个机器人每分钟最多发送20条。如果超过20条，会限流10分钟。
+    // https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq\
+    private final RateLimiter LIMITER = RateLimiter.create(17.0 / 60);
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
 
     static {
-        HTTP_CLIENT = new OkHttpClient.Builder()
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .build();
+        HTTP_CLIENT = new OkHttpClient.Builder().build();
     }
 
     /**
@@ -36,24 +39,21 @@ public class OkHttpHelper {
      */
     public void doPost(String url, Object param) throws IOException {
 
-        RequestBody requestBody = RequestBody.create(mediaType, objectMapper.writeValueAsString(param));
+        double acquire = LIMITER.acquire();
+        String content = objectMapper.writeValueAsString(param);
+        log.debug("request => acquire: {}, param : [{}]", acquire, content);
+
+        RequestBody requestBody = RequestBody.create(mediaType, content);
 
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
 
-        HTTP_CLIENT.newCall(request).enqueue(new Callback() {
+        Response response = HTTP_CLIENT.newCall(request).execute();
 
-            @Override
-            public void onFailure(Call call, IOException e) {
-                log.error("错误", e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                log.info("{}", response.body());
-            }
-        });
+        if (Objects.nonNull(response.body())) {
+            log.debug("response <= : [{}]", response.body().string());
+        }
     }
 }

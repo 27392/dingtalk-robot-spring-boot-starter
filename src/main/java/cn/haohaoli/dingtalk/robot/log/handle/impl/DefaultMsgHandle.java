@@ -20,15 +20,11 @@ public class DefaultMsgHandle implements MsgHandle {
 
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    //每个机器人每分钟最多发送20条。如果超过20条，会限流10分钟。
-    // https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq\
-
     @Override
     public AbstractMsg getMsg(ILoggingEvent event) {
         if (Level.ERROR == event.getLevel()) {
             ThrowableProxy throwableProxy = (ThrowableProxy) event.getThrowableProxy();
             Throwable      throwable      = throwableProxy.getThrowable();
-
             String sb = "### 错误日志"
                     + "\n #### 等级"
                     + "\n" + Level.ERROR.levelStr
@@ -36,9 +32,10 @@ public class DefaultMsgHandle implements MsgHandle {
                     + "\n" + event.getLoggerName()
                     + "\n#### 时间"
                     + "\n" + dateTimeFormatter.format(LocalDateTime.now())
-                    + "\n#### 异常信息"
+                    + "\n#### 错误信息"
+                    + "\n" + throwable.getMessage()
+                    + "\n#### 堆栈信息"
                     + "\n> " + getStackTraceInfo(throwable);
-
             return new MarkdownMsg("错误日志", sb);
         }
         return null;

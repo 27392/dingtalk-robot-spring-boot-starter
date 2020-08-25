@@ -26,8 +26,8 @@ public class DingTalkRobotAutoConfiguration {
 
     @PostConstruct
     public void init() {
-        log.info("以开启钉钉机器人...");
         Assert.notNull(properties.getAccessToken(), "请配置钉钉机器人accessToken");
+        log.info("以开启钉钉机器人...");
     }
 
     @Bean

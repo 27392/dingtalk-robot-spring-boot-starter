@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * @author LiWenHao
@@ -23,19 +24,23 @@ public class DefaultMsgHandle implements MsgHandle {
     @Override
     public AbstractMsg getMsg(ILoggingEvent event) {
         if (Level.ERROR == event.getLevel()) {
-            ThrowableProxy throwableProxy = (ThrowableProxy) event.getThrowableProxy();
-            Throwable      throwable      = throwableProxy.getThrowable();
-            String sb = "### 错误日志"
-                    + "\n #### 等级"
+
+            String msg = Optional.ofNullable(event.getThrowableProxy())
+                    .map(it -> (ThrowableProxy) it)
+                    .map(ThrowableProxy::getThrowable)
+                    .map(this::getStackTraceInfo)
+                    .orElseGet(event::getFormattedMessage);
+
+            String sb = "## 错误日志"
+                    + "\n ### 等级"
                     + "\n" + Level.ERROR.levelStr
-                    + "\n#### 类名"
+                    + "\n### 类名"
                     + "\n" + event.getLoggerName()
-                    + "\n#### 时间"
+                    + "\n### 时间"
                     + "\n" + dateTimeFormatter.format(LocalDateTime.now())
-                    + "\n#### 错误信息"
-                    + "\n" + throwable.getMessage()
-                    + "\n#### 堆栈信息"
-                    + "\n> " + getStackTraceInfo(throwable);
+                    + "\n### 信息"
+                    + "\n> " + msg;
+
             return new MarkdownMsg("错误日志", sb);
         }
         return null;

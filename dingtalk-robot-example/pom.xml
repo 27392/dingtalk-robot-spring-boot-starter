@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <dingtalk-robot.version>1.1.2-RELEASE</dingtalk-robot.version>
     </properties>
 
     <dependencies>
@@ -39,7 +40,7 @@
         <dependency>
             <groupId>cn.haohaoli</groupId>
             <artifactId>dingtalk-robot-spring-boot-starter</artifactId>
-            <version>1.1.0-RELEASE</version>
+            <version>${dingtalk-robot.version}</version>
         </dependency>
 
         <dependency>
@@ -71,9 +72,9 @@
                         <configuration>
                             <groupId>cn.haohaoli</groupId>
                             <artifactId>dingtalk-robot-spring-boot-starter</artifactId>
-                            <version>1.1.0-RELEASE</version>
+                            <version>${dingtalk-robot.version}</version>
                             <file>
-                                ${project.basedir}/src/main/resources/lib/dingtalk-robot-spring-boot-starter-1.1.0-RELEASE.jar
+                                ${project.basedir}/src/main/resources/lib/dingtalk-robot-spring-boot-starter-${dingtalk-robot.version}.jar
                             </file>
                             <generatePom>false</generatePom>
                         </configuration>

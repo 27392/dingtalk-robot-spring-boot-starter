@@ -3,5 +3,6 @@ server:
 
 ding-talk:
   robot:
+    name: example
     enable: true
     access-token:

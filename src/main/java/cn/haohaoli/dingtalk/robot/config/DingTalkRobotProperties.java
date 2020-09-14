@@ -20,6 +20,8 @@ public class DingTalkRobotProperties {
 
     private String accessToken;
 
+    private String name;
+
     public String getWebHookUrl(){
         return String.format(Constants.WEB_HOOK_URL, accessToken);
     }
